@@ -1,0 +1,152 @@
+<div class="container">
+  <h2 class="mt-5">Product Management</h2>
+  <button class="btn btn-primary my-4" (click)="addingProduct = true">
+    Add Product
+  </button>
+  <div *ngIf="addingProduct">
+    <form class="mb-4">
+      <div class="form-group">
+        <label for="add-name">Name</label>
+        <input
+          class="form-control"
+          type="text"
+          id="add-name"
+          name="name"
+          [(ngModel)]="tempSaveProduct.name"
+        />
+      </div>
+      <div class="form-group">
+        <label for="add-description">Description</label>
+        <input
+          class="form-control"
+          type="text"
+          name="description"
+          [(ngModel)]="tempSaveProduct.description"
+          id="add-description"
+        />
+      </div>
+      <div class="form-group">
+        <label for="add-price">Price</label>
+        <input
+          class="form-control"
+          type="text"
+          name="price"
+          [(ngModel)]="tempSaveProduct.unitPrice"
+          id="add-price"
+        />
+      </div>
+      <div class="form-group">
+        <label for="add-units">Units in Stock</label>
+        <input
+          class="form-control"
+          type="number"
+          name="stock"
+          min="0"
+          [(ngModel)]="tempSaveProduct.unitsInStock"
+          id="add-units"
+        />
+      </div>
+      <button class="btn btn-danger" (click)="cancelAdd($event)">
+        Cancel
+      </button>
+      <button class="btn btn-primary mx-4" (click)="saveProduct($event)">
+        Save
+      </button>
+    </form>
+  </div>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Units In Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody *ngFor="let tempProduct of products; let i = index">
+      <tr>
+        <td class="align-middle">
+          <img src="{{ tempProduct.imageUrl }}" height="150" />
+        </td>
+        <td class="align-middle">{{ tempProduct.name }}</td>
+        <td class="align-middle">
+          {{ tempProduct.unitPrice | currency: "USD" }}
+        </td>
+        <td class="align-middle">{{ tempProduct.description }}</td>
+        <td class="align-middle">{{ tempProduct.unitsInStock }}</td>
+        <td class="align-middle">
+          <div class="action-container">
+            <button class="btn btn-primary" (click)="openEditProduct(i)">
+              EDIT
+            </button>
+            <button
+              class="btn btn-danger mx-4"
+              (click)="removeProduct(tempProduct)"
+            >
+              DELETE
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="activeEditing === i">
+        <td colspan="6">
+          <form>
+            <div class="form-group">
+              <label for="{{ 'name-' + i }}">Name</label>
+              <input
+                class="form-control"
+                type="text"
+                id="{{ 'name-' + i }}"
+                name="name"
+                [(ngModel)]="editingProduct.name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="{{ 'description-' + i }}">Description</label>
+              <input
+                class="form-control"
+                type="text"
+                name="description"
+                [(ngModel)]="editingProduct.description"
+                id="{{ 'description-' + i }}"
+              />
+            </div>
+            <div class="form-group">
+              <label for="{{ 'price-' + i }}">Price</label>
+              <input
+                class="form-control"
+                type="text"
+                name="price"
+                [(ngModel)]="editingProduct.unitPrice"
+                id="{{ 'price-' + i }}"
+              />
+            </div>
+            <div class="form-group">
+              <label for="{{ 'units-' + i }}">Units in Stock</label>
+              <input
+                class="form-control"
+                type="number"
+                name="stock"
+                min="0"
+                [(ngModel)]="editingProduct.unitsInStock"
+                id="{{ 'units-' + i }}"
+              />
+            </div>
+            <button class="btn btn-danger" (click)="cancelEditing($event)">
+              Cancel
+            </button>
+            <button
+              class="btn btn-primary mx-4"
+              (click)="editProduct(i, $event)"
+            >
+              Save
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
