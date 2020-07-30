@@ -7,4 +7,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @CrossOrigin(origins = "*", methods = {RequestMethod.DELETE, RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
 }
