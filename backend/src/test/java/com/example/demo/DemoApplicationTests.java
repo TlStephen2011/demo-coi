@@ -2,24 +2,28 @@ package com.example.demo;
 
 import com.example.demo.models.Product;
 import com.example.demo.repositories.ProductRepository;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DemoApplicationTests {
 
 	@Autowired
 	private ProductRepository productRepository;
 
-	@BeforeTestMethod
-	void init() {
+	@BeforeAll
+	void emptyDatabase() {
+		productRepository.deleteAll();
+	}
+
+	@BeforeEach
+	void initEach() {
 		Product p1 = new Product("First", "Test", new BigDecimal(15.15), "https://starcafe.websites.co.in/dummytemplate/img/product-placeholder.png", 5);
 		Product p2 = new Product("Second", "Test", new BigDecimal(15.15), "https://starcafe.websites.co.in/dummytemplate/img/product-placeholder.png", 5);
 		Product p3 = new Product("Third", "Test", new BigDecimal(15.15), "https://starcafe.websites.co.in/dummytemplate/img/product-placeholder.png", 5);
@@ -35,13 +39,55 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
-		org.junit.jupiter.api.Assertions.assertNotNull(productRepository);
+		Assertions.assertNotNull(productRepository);
 	}
 
 	@Test
 	void poop() {
 		List<Product> products = productRepository.findAll();
-		org.junit.jupiter.api.Assertions.assertEquals(products.size(), 5);
+		Assertions.assertEquals(5, products.size());
+	}
+
+	@Test
+	void deletesProduct() {
+		Product p1 = new Product("Sixth", "Test", new BigDecimal(15.15), "", 5);
+		productRepository.save(p1);
+		productRepository.delete(p1);
+
+		List<Product> products = productRepository.findAll();
+		Assertions.assertEquals(5, products.size());
+	}
+
+	@Test
+	void savesProduct() {
+		Product p1 = new Product("Sixth", "Test", new BigDecimal(15.15), "", 5);
+		productRepository.save(p1);
+
+		List<Product> products = productRepository.findAll();
+		Assertions.assertEquals(6,products.size() );
+	}
+
+	@AfterEach
+	void dropProducts() {
+		productRepository.deleteAll();
+	}
+
+	@Test
+	void updatesProduct() {
+		Product p1 = new Product("Sixth", "Test", new BigDecimal(15.15), "", 5);
+		productRepository.save(p1);
+
+		p1.setName("name");
+
+		productRepository.save(p1);
+
+		Optional<Product> fromDb = productRepository.findById(p1.getId());
+
+		fromDb.ifPresentOrElse(product -> {
+			Assertions.assertEquals("name", product.getName());
+		}, () -> {
+			Assertions.assertEquals(1, 2);
+		});
 	}
 
 }

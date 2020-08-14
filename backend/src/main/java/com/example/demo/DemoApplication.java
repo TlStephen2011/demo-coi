@@ -17,7 +17,7 @@ public class DemoApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(DemoApplication.class);
 
-	@Autowired // FUCK INTELLIJ
+	@Autowired
 	private ProductRepository productRepository;
 
 	@EventListener(ApplicationStartedEvent.class)
